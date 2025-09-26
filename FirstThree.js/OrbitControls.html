@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbit Controls</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+        html{margin:0; height:100%; background: dark; overflow: hidden;}
+    </style>
+</head>
+<body>
+    <script type="module">
+        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+        import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+
+        // 1. create a scene, camera, position, renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(5,3,7); // x,y,z
+         // 2. create Renderer, set the size of it, add to browser
+        const renderer = new THREE.WebGLRenderer({antialias:true});
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Add OrbitControls
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; // for smooth interaction
+        controls.dampingFactor = 0.05;
+
+        // 3. create a geometry, material, mesh, add to scene
+        const geo = new THREE.SphereGeometry(2,2,2);
+        const mat = new THREE.MeshNormalMaterial();
+        const cube = new THREE.Mesh(geo, mat);
+        scene.add(cube);
+
+    </script>
+</body>
+</html>
