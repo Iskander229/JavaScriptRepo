@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><title>Sine Tunnel — Phase 1</title>
+<style>
+ html,body{
+  margin:0;height:100%;background:#0b0d12;overflow:hidden}
+  </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const cvs = document.getElementById('c'),
+ ctx = cvs.getContext('2d');
+function fit()
+{ cvs.width=innerWidth; 
+  cvs.height=innerHeight
+
+ }
+ addEventListener('resize',fit); 
+ fit();
+
+const x = 140;
+ r = 10;
+let y = cvs.height/2, up=false, down=false;
+
+addEventListener('keydown', e=>{ if(e.key==='ArrowUp')up=true; if(e.key==='ArrowDown')down=true; });
+addEventListener('keyup',   e=>{ if(e.key==='ArrowUp')up=false; if(e.key==='ArrowDown')down=false; });
+
+let last = performance.now();
+function loop(t){
+  requestAnimationFrame(loop);
+  const dt = Math.min((t-last)/1000, 0.05); 
+  last = t;
+
+  const vy = (down?1:0) - (up?1:0);
+  y += vy * 260 * dt;
+  y = Math.max(r, Math.min(cvs.height - r, y));
+
+  ctx.clearRect(0,0,cvs.width,cvs.height);
+  ctx.fillStyle='#10b981'; 
+  ctx.beginPath();
+  ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.fill();
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+html,body{
+    margin:0;
+    height:100%;
+    background: black;
+    overflow:hidden;
+}
+#hub {
+    position:fixed;
+    top: 8px;
+    left:8px;
+    color:antiquewhite;
+    font: 600 14px system-ui;
+}

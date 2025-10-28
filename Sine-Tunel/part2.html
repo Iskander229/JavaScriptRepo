@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><title>Sine Tunnel — Phase 2</title>
+<style>html,body{margin:0;height:100%;background:#0b0d12;overflow:hidden}</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const cvs = document.getElementById('c'), ctx = cvs.getContext('2d');
+function fit(){ cvs.width=innerWidth; cvs.height=innerHeight } addEventListener('resize',fit); fit();
+
+// player
+const px = 140, r = 10;
+let py = cvs.height/2, up=false, down=false, alive=true;
+addEventListener('keydown', e=>{ if(e.key==='ArrowUp')up=true; if(e.key==='ArrowDown')down=true; });
+addEventListener('keyup',   e=>{ if(e.key==='ArrowUp')up=false; if(e.key==='ArrowDown')down=false; });
+
+// tunnel
+let phase = 0, amp = 120, freq = 0.004, gap = 200, speed = 2.0;
+const mid = ()=> cvs.height/2;
+const topY = x => mid() + amp*Math.sin(freq*x + phase) - gap/2;
+const botY = x => mid() + amp*Math.sin(freq*x + phase) + gap/2;
+
+function drawLine(fn, color){
+  ctx.strokeStyle = color; ctx.lineWidth=2; ctx.beginPath();
+  for(let x=0;x<=cvs.width;x+=6){ const y=fn(x); x?ctx.lineTo(x,y):ctx.moveTo(x,y) } ctx.stroke();
+}
+
+let last = performance.now();
+function loop(t){
+  requestAnimationFrame(loop);
+  const dt = Math.min((t-last)/1000, 0.05); last = t;
+
+  if(alive){
+    const vy = (down?1:0) - (up?1:0);
+    py += vy * 260 * dt;
+    py = Math.max(r, Math.min(cvs.height - r, py));
+
+    phase += speed * dt;
+
+    const top = topY(px), bot = botY(px);
+    if(py - r < top || py + r > bot){ alive=false; alert('Game Over!'); }
+  }
+
+  ctx.clearRect(0,0,cvs.width,cvs.height);
+  drawLine(topY, '#38bdf8'); // top
+  drawLine(botY, '#f472b6'); // bottom
+  ctx.fillStyle='#10b981'; ctx.beginPath(); ctx.arc(px,py,r,0,Math.PI*2); ctx.fill();
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
