@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Sin Line</title>
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            background: #0b0d12;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        // get canvas
+        const canvas = document.getElementById('canvas');
+        // context should be 2d or 3d
+        const ctx = canvas.getContext('2d');
+        // make canvas fit window
+        function fit() {
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+        }
+        fit();
+
+        //listen - in case of resize, do fit to window.
+        addEventListener('resize', fit());
+        //phase number keeps bigger (+=0.03) to animate wave.
+        let phase = 0;
+        //create animation for wave line.
+        function loop(){
+            requestAnimationFrame(loop);
+            phase += 0.03;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = 'cyan';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for(let i = 0; i <= canvas.width; i += 5) {
+                const y = canvas.height / 2 + 60 * Math.sin(0.01 * i + phase);
+                i ? ctx.lineTo(i, y) : ctx.moveTo(i, y);
+            }
+            ctx.stroke();
+        }
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>
