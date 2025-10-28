@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {font-family: Arial, sans-serif;}
+        .movie-poster {
+            width: 100%;
+            max-width: 300px;
+        }
+        .cast-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .cast-table th, .cast-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .cast-table th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <!--Nav-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Back to Home</a>
+            <div class="navbar-nav">
+                <a class="nav-link active" href="#">Details</a>
+                <a class="nav-link" href="contact.html">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div id="movieDetails"></div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p>Movie Site</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        //movie data
+        var movies = [
+            {
+                id: 1,
+                title: 'Iron man 1',
+                poster: 'assets/MovieImg1.png',
+                description: 'After being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.',
+                cast: [
+                    { name:'Robert jr', role:'Tony stark' },
+                    { name:'Don cheadle', role:'James' },
+                    { name:'Gwyneth Paltrow', role:'Pepper' }
+                ]
+            },
+            {
+                id: 2,
+                title: 'Iron man 2',
+                poster: 'assets/MovieImg2.png',
+                description: 'With the world now aware of his dual life as the armored superhero Iron Man, billionaire inventor Tony Stark faces pressure from the government, the press and the public to share his technology with the military. Unwilling to let go of his invention, Stark, with Pepper Potts and James Rhodes at his side, must forge new alliances – and confront powerful enemies.',
+                cast: [
+                    { name:'Robert jr', role:'Tony stark' },
+                    { name:'Don cheadle', role:'James' },
+                    { name:'Gwyneth Paltrow', role:'Pepper' }
+                ]
+            },
+            {
+                id: 3,
+                title: 'Iron man 3', 
+                poster: 'assets/MovieImg3.png',
+                description: 'When Tony Starks world is torn apart by a formidable terrorist called the Mandarin, he starts an odyssey of rebuilding and retribution.',
+                cast: [
+                    { name:'Robert jr', role:'Tony stark' },
+                    { name:'Don cheadle', role:'James' },
+                    { name:'Gwyneth Paltrow', role:'Pepper' }
+                ]
+            }
+           
+        ];
+
+        //movie ID from URL
+        function getMovieIdFromUrl() {
+            var urlParams = new URLSearchParams(window.location.search);
+            return parseInt(urlParams.get('movie')) || 1;
+        }
+
+        //show details about 
+        function showDetails() {
+            var movieId = getMovieIdFromUrl();
+            var container = document.getElementById('movieDetails');
+            var movie = null;
+            
+            //Finding movie
+            for (var i = 0; i < movies.length; i++) {
+                if (movies[i].id === movieId) {
+                    movie = movies[i];
+                    break;
+                }
+            }
+            
+            if (!movie) {
+                container.innerHTML = '<p>Movie not found. <a href="index.html">Go back</a></p>';
+                return;
+            }
+            
+            //details
+            var html = '<div class="row"><div class="col-md-4">';
+            html+='<img src="' + movie.poster + '" class="movie-poster" alt="' + movie.title + '">';
+            html+='</div><div class="col-md-8">';
+            html+='<h1>' + movie.title + '</h1>';
+            html+='<p>' + movie.description + '</p>';
+            html+='<h3>Cast</h3>';
+            html+='<table class="cast-table">';
+            html+='<th>Actor</th><th>Role</th>';
+            
+            for (var j = 0; j < movie.cast.length; j++) {
+                html += '<tr><td>' + movie.cast[j].name + '</td><td>' + movie.cast[j].role + '</td></tr>';
+            }
+
+            html+='</table>';
+            html+='<a href="index.html" class="btn btn-secondary mt-3">Back to Movies</a>';
+            html+='</div></div>';
+            
+            container.innerHTML = html;
+        }
+
+        //loading
+        window.onload = showDetails;
+    </script>
+</body>
+</html>

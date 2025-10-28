@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Shape Dodger</title>
+    <link rel="stylesheet" href="styles.css"> //link your css
+    <script type = "importmap"> //import threejs
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
+        }
+    }   
+    </script> 
+</head>
+<body>
+    <div id="hint">Use ← / → to move</div> //game hint
+    <script type="module">
+        import * as THREE from 'three';
+        //sceene, camera, renderer setup;
+        const scene = new THREE.Scene();
+        // fov, aspect ratio, near, far
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        //antialias makes edges smoother
+        const renderer = new THREE.WebGLRenderer({antialias: true});
+        //set size to full window
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        //add renderer to the document
+        document.body.appendChild(renderer.domElement);
+        //player as a sphere and his material
+        const playerGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+        const playerMaterial = new THREE.MeshBasicMaterial({color: 0x00ff00});
+        const player = new THREE.Mesh(playerGeometry, playerMaterial);
+        scene.add(player);
+
+        //obstacle as a pyramid and its material
+        const obstacleGeometry = new THREE.ConeGeometry(0.5, 1, 4);
+        const obstacleMaterial = new THREE.MeshBasicMaterial({color: 0xff0000});
+        const obstacle = new THREE.Mesh(obstacleGeometry, obstacleMaterial);
+        //I want obstacles to face points towards the player
+        obstacle.rotation.x = Math.PI * 0.5;
+        //setting z=-10 to start far from camera
+        obstacle.position.z = -10;
+        scene.add(obstacle);
+
+        //set camera position
+        camera.position.z = 5;
+
+        //input handling
+        let left = false;
+        let right = false;
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'ArrowLeft') left = true;
+            if (event.code === 'ArrowRight') right = true;
+        });
+        //if user releases key
+        document.addEventListener('keyup', (event) => {
+            if (event.code === 'ArrowLeft') left = false;
+            if (event.code === 'ArrowRight') right = false;
+        });
+
+        //game loop
+        function loop(){
+            requestAnimationFrame(loop);
+            //move player
+            if (left) player.position.x -= 0.1;
+            if (right) player.position.x += 0.1;
+            //clamp player position within bounds
+            player.position.x=THREE.MathUtils.clamp(player.position.x, -4, 4);
+            //move obstacle towards camera
+            obstacle.position.z += 0.12;
+            obstacle.rotation.z += 0.05; //rotate obstacle for effect
+
+            //reset obstacle when it goes past camera
+            if (obstacle.position.z > 5){
+                //reset obstacle position
+                obstacle.position.z = -10;
+                //random x position between -4 and 4
+                obstacle.position.x = (Math.random() - 0.5) *8;
+            }
+
+            //simple AABB method
+            const dz = obstacle.position.z - player.position.z;
+            const dx = obstacle.position.x - player.position.x;
+            if (Math.abs(dz) < 1 && Math.abs(dx) < 1){
+                obstacle.position.z = -10;
+                alert("Game Over!");
+                //reset positions
+                player.position.x = 0;
+                obstacle.position.z = -10;
+                obstacle.position.x = (Math.random() - 0.5) *8;
+            }
+            //render the scene or show my frame on screen
+            renderer.render(scene, camera);
+        }
+        loop();     
+    </script>
+    </div>
+</body>
+</html>
