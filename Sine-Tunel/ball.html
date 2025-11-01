@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        function fit() {
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+        }
+        addEventListener('resize', fit);
+        fit();
+
+        //ball properties
+        let x = canvas.width / 2; //ball x position (horizontal)
+        let y = canvas.height / 2; //ball y position (vertical)
+        const r = 10; //ball radius
+        const speed = 200; //ball speed in pixels per secon
+        
+        let vx = 200;
+        let vy = 150; //vertical speed
+
+        let last = performance.now(); //time of previous frame
+
+        function loop (t){
+            requestAnimationFrame(loop);
+            const dt = (t - last)/1000; //gap between frames in seconds
+            last = t;
+
+            //update ball position
+            x += vx * dt;
+            y += vy * dt;
+
+            //bounce off walls
+            //if the ball's left edge goes past 0 or right edge past canvas width - flip the x velocity
+            if (x - r < 0 || x + r > canvas.width) {
+                vx *= -1;
+            }
+            if (y - r < 0 || y + r > canvas.height) {
+                vy *= -1;
+            }
+
+            //draw
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "lime";
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        requestAnimationFrame(loop);
+    </script>
+</body>
+</html>

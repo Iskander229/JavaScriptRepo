@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moving Wave + ball</title>
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            background: #0b0d12;
+            overflow: hidden;
+        }
+        canvas {display: block;}
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        function fit() {
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+        }
+        addEventListener('resize', fit());
+        fit();
+
+        //Wave parameters
+        const AMP = 60; //amplitude how tall the wave is (peak)
+        const FREQ = 0.01; //frequency how often the wave repeats
+        let phase = 0; //phase to animate wave  
+        
+        //ball parameters
+        let bx =0 //ball x position
+        const br = 8; //ball radius
+        const ballSpeed = 180; //ball speed in pixels per second
+
+        //where is the wave right now?
+        const yAt = x=> canvas.height/2 + AMP * Math.sin(FREQ * x + phase);
+
+        //store the time of the previous frame
+        let last = performance.now();
+
+        //main loop
+        function loop(t){
+            requestAnimationFrame(loop);
+            const dt = Math.min((t - last)/1000, 0.05); //gap between frames in seconds.
+            last = t;
+            //looking for new t
+            //animate on the sine line
+            //phase makes the wave move left and right over time
+            phase += 2.0 * dt; //speed of wave movement
+
+            bx += ballSpeed * dt;
+
+            if(bx > canvas.width + 20){
+                bx = -20;
+            }
+
+            //draw a circle (ball)
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.StrokeStyle = "cyan"
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for(let x = 0; x < canvas.width; x+=5){
+                const y = yAt(x);
+                if(x===0){
+                    ctx.moveTo(x,y);
+                } else {
+                    ctx.lineTo(x,y);
+                } 
+            }
+
+            ctx.stroke();
+
+            //ball on the wave
+            //catch the x and y of the sine wave and put the ball on it
+            const by = yAt(bx)
+            ctx.fillStyle = "lime";
+            ctx.beginPath();
+            ctx.arc(bx, by, br, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        requestAnimationFrame(loop);
+    </script>
+</body>
+</html>
