@@ -158,26 +158,26 @@
             }});
 
 //Main loop
-        function animate() {
-            //how much time passed since last frame
-            const now = Date.now();
-            const delta = now - lastTime; 
-            lastTime = now;
+        let last = performance.now();
+        function animate(t) {
+            requestAnimationFrame(animate);
+            const dt = Math.min((t-last)/1000, 0.05); 
+            last = t;
 
             // is game still running?
             if (running) {
                 //update game timer
-                time -= delta / 1000; //to s
+                time -= dt;
                 if (time <= 0) {
                     time = 0;
                     combo = 0;
                     running = false; //game over
                 }
             //update mole
-                sincePopUp += delta; // add time to pop up counter
+                sincePopUp += dt * 1000; // add time to pop up counter
                 //if mole is up, animate rising and check if it should go back down 
                 if (moleIsUp) {
-                    mole.userData.t += delta; //add to how long mole has been up
+                    mole.userData.t += dt * 1000; //add to how long mole has been up
                     
                     //Animate mole up (first 300ms)
                     if (mole.userData.t < 300) {
@@ -205,11 +205,10 @@
             // Render and animate, UI
             updateUI();
             renderer.render(scene, camera);
-            requestAnimationFrame(animate);
         }
         
         // Start the animation loop
-        animate();
+        animate(performance.now());
     </script>
 </body>
 </html>
